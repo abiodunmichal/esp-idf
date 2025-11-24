@@ -1,0 +1,24 @@
+name: Build ESP32-S3 Bootloader
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build bootloader
+        run: |
+          docker run --rm -v $GITHUB_WORKSPACE:/work -w /work espressif/idf:latest ./build_idfboot.sh -c esp32s3
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v3
+        with:
+          name: esp32s3-binaries
+          path: out/
